@@ -32,6 +32,13 @@ IMAGE_QUALITY = 95              # JPEG quality (1-100)
 # ---------------------------------------------------------------------------
 import cv2  # noqa: E402  (import here so config is importable before opencv)
 HAAR_CASCADE_PATH = cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
+if not os.path.exists(HAAR_CASCADE_PATH):
+    raise RuntimeError(
+        f"Haar cascade file not found at {HAAR_CASCADE_PATH}. "
+        "This usually means the installed OpenCV package does not ship "
+        "the cascade data files. Install a compatible OpenCV release, "
+        "for example opencv-python-headless<5.0.0."
+    )
 
 # Face detection parameters
 SCALE_FACTOR = 1.1

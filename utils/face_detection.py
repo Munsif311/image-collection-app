@@ -85,10 +85,22 @@ class FaceDetector:
     """
 
     def __init__(self) -> None:
+        if not hasattr(cv2, "CascadeClassifier"):
+            raise RuntimeError(
+                "OpenCV does not provide CascadeClassifier in the current "
+                "installation. Please install a compatible OpenCV release, "
+                "for example opencv-python-headless<5.0.0."
+            )
+
         self._cascade = cv2.CascadeClassifier(HAAR_CASCADE_PATH)
         if self._cascade.empty():
             raise RuntimeError(
-                f"Failed to load Haar Cascade from: {HAAR_CASCADE_PATH}"
+                "Failed to load Haar Cascade from: {path}. "
+                "Ensure the installed OpenCV package includes the Haar cascade "
+                "data files and that the dependency is pinned to a compatible "
+                "version such as opencv-python-headless<5.0.0.".format(
+                    path=HAAR_CASCADE_PATH
+                )
             )
         logger.info("FaceDetector initialised with cascade: %s", HAAR_CASCADE_PATH)
 

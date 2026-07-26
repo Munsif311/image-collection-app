@@ -65,6 +65,8 @@ source .venv/bin/activate
 # 3. Install dependencies
 pip install -r requirements.txt
 
+> Note: The app requires a compatible OpenCV release with Haar cascade support. The bundled requirements pin `opencv-python-headless<5.0.0` because OpenCV 5.x no longer exposes `CascadeClassifier` in the same way.
+
 # 4. Run the app
 streamlit run app.py
 ```
