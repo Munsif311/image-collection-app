@@ -1,0 +1,13 @@
+# This folder holds one sub-directory per employee.
+# Example structure:
+#
+# employees/
+# ├── EMP001_Ali_Khan/
+# │   ├── img001.jpg
+# │   ├── img002.jpg
+# │   └── ... (up to img020.jpg)
+# └── EMP002_Sara_Ahmed/
+#     └── ...
+#
+# Sub-folders and images are created automatically by the app.
+# Do NOT manually place files here unless you also update employees.csv.
