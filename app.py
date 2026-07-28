@@ -479,12 +479,56 @@ def _render_registration() -> None:
         submitted = st.form_submit_button("🚀 Start Camera & Capture", use_container_width=True)
 
     if submitted:
+        emp_id_val = emp_id.strip().upper()
+        if not emp_id_val:
+            st.error("❌ Employee ID is required.")
+            return
+
+        # Look up existing records for auto-resume
+        records = csv_manager.get_employee_records(emp_id_val)
+        
+        if not records.empty:
+            first_row = records.iloc[0]
+            emp_name_val = emp_name.strip() or first_row["employee_name"]
+            dept_val = dept or first_row["department"]
+            email_val = email.strip() or str(first_row.get("email", ""))
+            
+            num_images = len(records)
+            if num_images < TOTAL_POSES:
+                # AUTO RESUME
+                st.session_state.employee_name = emp_name_val
+                st.session_state.department = dept_val
+                st.session_state.email = email_val
+                
+                emp_folder = storage.find_employee_folder_by_id(emp_id_val)
+                st.session_state.employee_folder = emp_folder
+                
+                captured = []
+                if emp_folder:
+                    img_paths = sorted(storage.list_employee_images(emp_folder))
+                    for p in img_paths:
+                        rgb = storage.load_image_rgb(p)
+                        if rgb is not None:
+                            captured.append(rgb)
+                
+                st.session_state.captured_images = captured
+                st.session_state.image_count = len(captured)
+                st.session_state.pose_index = len(captured)
+                
+                st.session_state.employee_id = emp_id_val
+                st.session_state.reg_submitted = True
+                st.session_state.dup_checked = True 
+                st.session_state.capture_started = True
+                st.rerun()
+        else:
+            emp_name_val = emp_name.strip()
+            dept_val = dept
+            email_val = email.strip()
+
         errors = []
-        if not emp_id.strip():
-            errors.append("Employee ID is required.")
-        if not emp_name.strip():
+        if not emp_name_val:
             errors.append("Employee Name is required.")
-        if not dept:
+        if not dept_val:
             errors.append("Department is required.")
 
         if errors:
@@ -492,11 +536,11 @@ def _render_registration() -> None:
                 st.error(f"❌ {e}")
             return
 
-        # Store in session state
-        st.session_state.employee_id = emp_id.strip().upper()
-        st.session_state.employee_name = emp_name.strip()
-        st.session_state.department = dept
-        st.session_state.email = email.strip()
+        # Store in session state for a new capture or full dataset
+        st.session_state.employee_id = emp_id_val
+        st.session_state.employee_name = emp_name_val
+        st.session_state.department = dept_val
+        st.session_state.email = email_val
         st.session_state.reg_submitted = True
         st.session_state.dup_checked = False
         st.rerun()

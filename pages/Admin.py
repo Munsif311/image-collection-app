@@ -26,6 +26,29 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+# ── Authentication ─────────────────────────────────────────────────────────
+def check_password():
+    if "admin_logged_in" not in st.session_state:
+        st.session_state["admin_logged_in"] = False
+
+    if not st.session_state["admin_logged_in"]:
+        st.markdown("<div style='text-align: center; margin-top: 50px;'>", unsafe_allow_html=True)
+        st.markdown("## 🔒 Admin Login")
+        st.markdown("Please enter your admin credentials to access this page.")
+        email = st.text_input("Email", key="admin_email")
+        password = st.text_input("Password", type="password", key="admin_password")
+        if st.button("Login", use_container_width=True):
+            # Change these to your actual Gmail and password!
+            if email == "admin@gmail.com" and password == "admin123":  
+                st.session_state["admin_logged_in"] = True
+                st.rerun()
+            else:
+                st.error("❌ Incorrect email or password.")
+        st.markdown("</div>", unsafe_allow_html=True)
+        st.stop()
+
+check_password()
+
 # ── Custom CSS (mirrors app.py) ────────────────────────────────────────────
 st.markdown(
     """
